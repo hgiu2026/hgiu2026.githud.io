@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简映视频</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
+        body{background:#111;color:#fff;padding-bottom:20px}
+        header{padding:16px;background:#222;position:sticky;top:0;z-index:99}
+        .search{width:100%;padding:10px 14px;border-radius:99px;border:none;font-size:16px}
+        .tags{display:flex;gap:10px;padding:14px;overflow-x:auto}
+        .tag{white-space:nowrap;padding:7px 14px;border-radius:99px;background:#333;cursor:pointer}
+        .tag.active{background:#4285f4}
+        .container{padding:0 14px;display:grid;grid-template-columns:1fr;gap:16px}
+        .video-card{background:#222;border-radius:12px;overflow:hidden}
+        .video-card video{width:100%;display:block}
+        .info{padding:10px}
+        .title{font-size:15px;margin-bottom:4px}
+        .modal{position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:999}
+        .modal video{width:90%;max-width:700px}
+        .close{position:absolute;top:20px;right:24px;font-size:32px;color:#fff;cursor:pointer}
+    </style>
+</head>
+<body>
+    <header>
+        <input class="search" placeholder="搜索视频..." id="search">
+    </header>
+    <div class="tags">
+        <div class="tag active" data-type="all">全部</div>
+        <div class="tag" data-type="study">学习</div>
+        <div class="tag" data-type="calm">治愈</div>
+        <div class="tag" data-type="fun">搞笑</div>
+        <div class="tag" data-type="music">音乐</div>
+    </div>
+    <div class="container" id="videoList">
+        <div class="video-card" data-type="calm" onclick="openVideo(this)">
+            <video muted preload="metadata" src="https://cdn.pexels.com/videos/1289100/river-water-flowing-stream-1289100.mp4"></video>
+            <div class="info">
+                <div class="title">流水风景｜治愈</div>
+            </div>
+        </div>
+        <div class="video-card" data-type="study" onclick="openVideo(this)">
+            <video muted preload="metadata" src="https://cdn.pexels.com/videos/3129671/books-on-table-3129671.mp4"></video>
+            <div class="info">
+                <div class="title">安静书桌｜学习</div>
+            </div>
+        </div>
+        <div class="video-card" data-type="music" onclick="openVideo(this)">
+            <video muted preload="metadata" src="https://cdn.pexels.com/videos/1117183/piano-keys-1117183.mp4"></video>
+            <div class="info">
+                <div class="title">钢琴弹奏｜音乐</div>
+            </div>
+        </div>
+    </div>
+    <div class="modal" id="modal">
+        <div class="close" onclick="closeVideo()">×</div>
+        <video id="playVideo" controls></video>
+    </div>
+<script>
+const tags=document.querySelectorAll('.tag');
+const cards=document.querySelectorAll('.video-card');
+const search=document.getElementById('search');
+tags.forEach(t=>{
+    t.onclick=()=>{
+        tags.forEach(i=>i.classList.remove('active'));
+        t.classList.add('active');
+        let type=t.dataset.type;
+        cards.forEach(c=>{
+            if(type==='all'||c.dataset.type===type) c.style.display='block';
+            else c.style.display='none';
+        })
+    }
+})
+search.oninput=()=>{
+    let kw=search.value.toLowerCase();
+    cards.forEach(c=>{
+        let name=c.querySelector('.title').innerText.toLowerCase();
+        c.style.display=name.includes(kw)?'block':'none';
+    })
+}
+const modal=document.getElementById('modal');
+const playVideo=document.getElementById('playVideo');
+function openVideo(el){
+    playVideo.src=el.querySelector('video').src;
+    modal.style.display='flex';
+    playVideo.play();
+}
+function closeVideo(){
+    modal.style.display='none';
+    playVideo.pause();
+}
+modal.onclick=e=>{if(e.target===modal) closeVideo()}
+</script>
+</body>
+</html>
